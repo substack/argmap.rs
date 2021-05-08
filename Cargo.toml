@@ -1,0 +1,9 @@
+[package]
+name = "argmap"
+version = "1.0.0"
+edition = "2018"
+
+[dependencies]
+
+[dev-dependencies]
+pretty_assertions = "0.7.1"
