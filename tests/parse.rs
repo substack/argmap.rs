@@ -57,10 +57,81 @@ use std::collections::HashMap;
       ("j",vec!["3","zzz"]),
       ("i",vec!["q"]),
       ("5",vec![]),
-      ("n",vec!["9","1312"]),
+      ("n",vec!["9","-1312"]),
       ("v",vec![]),
       ("f",vec!["payload.tgz"]),
       ("w",vec!["3"]),
+    ].iter())];
+  }
+
+  {
+    let empty: Vec<String> = vec![];
+    let (args,argv) = argmap::parse(empty.iter());
+    assert_eq![args, empty];
+    assert_eq![argv, hash([].iter())];
+  }
+
+  {
+    let empty: Vec<String> = vec![];
+    let (args,argv) = argmap::parse(["--one"].iter());
+    assert_eq![args, empty];
+    assert_eq![argv, hash([
+      ("one",vec![]),
+    ].iter())];
+  }
+
+  {
+    let empty: Vec<String> = vec![];
+    let (args,argv) = argmap::parse(["-z"].iter());
+    assert_eq![args, empty];
+    assert_eq![argv, hash([
+      ("z",vec![]),
+    ].iter())];
+  }
+
+  {
+    let empty: Vec<String> = vec![];
+    let (args,argv) = argmap::parse(["--q","--"].iter());
+    assert_eq![args, empty];
+    assert_eq![argv, hash([
+      ("q",vec![]),
+    ].iter())];
+  }
+
+  {
+    let empty: Vec<String> = vec![];
+    let (args,argv) = argmap::parse(["--n","-555"].iter());
+    assert_eq![args, empty];
+    assert_eq![argv, hash([
+      ("n",vec!["-555"]),
+    ].iter())];
+  }
+
+  {
+    let empty: Vec<String> = vec![];
+    let (args,argv) = argmap::parse(["-abcdef123456"].iter());
+    assert_eq![args, empty];
+    assert_eq![argv, hash([
+      ("a",vec![]),
+      ("b",vec![]),
+      ("c",vec![]),
+      ("d",vec![]),
+      ("e",vec![]),
+      ("f",vec!["123456"]),
+    ].iter())];
+  }
+
+  {
+    let (args,argv) = argmap::new().boolean("q").parse([
+      "-x", "5",
+      "-q", "1234",
+      "--z=789",
+    ].iter());
+    assert_eq![args, vec!["1234"]];
+    assert_eq![argv, hash([
+      ("x",vec!["5"]),
+      ("q",vec![]),
+      ("z",vec!["789"]),
     ].iter())];
   }
 }

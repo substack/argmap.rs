@@ -13,8 +13,8 @@ impl ArgMap {
       boolean: HashSet::new(),
     }
   }
-  pub fn boolean(mut self, key: String) -> Self {
-    self.boolean.insert(key);
+  pub fn boolean<T>(mut self, key: T) -> Self where T: ToString {
+    self.boolean.insert(key.to_string());
     self
   }
   pub fn parse<T>(&mut self, input: impl Iterator<Item=T>) -> (List,Map) where T: ToString {
@@ -48,7 +48,7 @@ impl ArgMap {
       } else if s.starts_with("-") {
         if let Some(k) = &key {
           if is_num(&s[1..2]) {
-            set(&mut argv, &k, &s[1..].to_string());
+            set(&mut argv, &k, &s.to_string());
             key = None;
             continue;
           }
@@ -61,11 +61,14 @@ impl ArgMap {
           let sv = s[i+1..].to_string();
           set(&mut argv, &sk, &sv);
         } else {
+          let mut jump = false;
           for i in 1..s.len()-1 {
             let k = s[i..i+1].to_string();
             if let Some(sk) = &key {
               if is_num(&k) {
-                set(&mut argv, sk, &s[1..].to_string());
+                set(&mut argv, sk, &s[i..].to_string());
+                key = None;
+                jump = true;
                 break;
               } else {
                 set_bool(&mut argv, &sk);
@@ -78,6 +81,7 @@ impl ArgMap {
               key = Some(k);
             }
           }
+          if jump { continue }
           let k = s[s.len()-1..].to_string();
           if let Some(sk) = &key {
             if self.boolean.contains(&k) {
@@ -102,6 +106,9 @@ impl ArgMap {
       } else {
         args.push(s);
       }
+    }
+    if let Some(k) = key {
+      set_bool(&mut argv, &k);
     }
     (args,argv)
   }
