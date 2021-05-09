@@ -138,11 +138,14 @@ use std::collections::HashMap;
   {
     let empty: Vec<String> = vec![];
     let (args,argv) = argmap::new().boolean("q").parse([
-      "-w-5"
+      "-w-5", "-qrs@4"
     ].iter());
     assert_eq![args, empty];
     assert_eq![argv, hash([
       ("w",vec!["-5"]),
+      ("q",vec![]),
+      ("r",vec![]),
+      ("s",vec!["@4"]),
     ].iter())];
   }
 }

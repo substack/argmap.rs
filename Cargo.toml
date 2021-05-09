@@ -12,3 +12,6 @@ edition = "2018"
 
 [dev-dependencies]
 pretty_assertions = "0.7.1"
+
+[dependencies]
+indoc = "1.0.3"
