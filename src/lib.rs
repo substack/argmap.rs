@@ -8,15 +8,20 @@ pub type Map = HashMap<String,Vec<String>>;
 pub type List = Vec<String>;
 
 impl ArgMap {
+  /// Create a new ArgMap instance.
   pub fn new() -> Self {
     Self {
       boolean: HashSet::new(),
     }
   }
+  /// Set a key to be treated as a boolean argument, where an argument that follows a boolean
+  /// argument will not be treated as the key's value.
   pub fn boolean<T>(mut self, key: T) -> Self where T: ToString {
     self.boolean.insert(key.to_string());
     self
   }
+  /// Parse an iterator of string arguments into a 2-tuple of positional arguments and a
+  /// HashMap mapping String keys to Vec<String> values.
   pub fn parse<T>(&mut self, input: impl Iterator<Item=T>) -> (List,Map) where T: ToString {
     let mut args: List = vec![];
     let mut argv: Map = HashMap::new();
@@ -65,7 +70,7 @@ impl ArgMap {
           for i in 1..s.len()-1 {
             let k = s[i..i+1].to_string();
             if let Some(sk) = &key {
-              if is_num(&k) {
+              if is_num(&k) || short_break(&k) {
                 set(&mut argv, sk, &s[i..].to_string());
                 key = None;
                 jump = true;
@@ -87,7 +92,7 @@ impl ArgMap {
             if self.boolean.contains(&k) {
               set_bool(&mut argv, sk);
               set_bool(&mut argv, &k);
-            } else if is_num(&k) {
+            } else if is_num(&k) || short_break(&k) {
               set(&mut argv, sk, &k);
               key = None;
             } else {
@@ -114,16 +119,24 @@ impl ArgMap {
   }
 }
 
+/// Create a new ArgMap instance.
 pub fn new() -> ArgMap {
   ArgMap::new()
 }
 
+/// Parse an iterator of string arguments into a 2-tuple of positional arguments and a
+/// HashMap mapping String keys to Vec<String> values.
 pub fn parse<T>(input: impl Iterator<Item=T>) -> (List,Map) where T: ToString {
   ArgMap::new().parse(input)
 }
 
 fn is_num(s: &str) -> bool {
   s.chars().nth(0).and_then(|c| Some('0' <= c && c <= '9')).unwrap_or(false)
+}
+fn short_break(s: &String) -> bool {
+  s.chars().next()
+    .and_then(|c| Some(!c.is_alphabetic()))
+    .unwrap_or(false)
 }
 
 fn set(argv: &mut Map, key: &String, value: &String) {

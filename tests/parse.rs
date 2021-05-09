@@ -134,6 +134,17 @@ use std::collections::HashMap;
       ("z",vec!["789"]),
     ].iter())];
   }
+
+  {
+    let empty: Vec<String> = vec![];
+    let (args,argv) = argmap::new().boolean("q").parse([
+      "-w-5"
+    ].iter());
+    assert_eq![args, empty];
+    assert_eq![argv, hash([
+      ("w",vec!["-5"]),
+    ].iter())];
+  }
 }
 
 fn hash<'a>(i: impl Iterator<Item=&'a (&'a str,Vec<&'a str>)>) -> HashMap<String,Vec<String>> {

@@ -1,9 +1,14 @@
 [package]
 name = "argmap"
 version = "1.0.0"
+description = "parse command-line arguments into a hashmap and vec of positional args"
+license = "MIT OR Apache-2.0"
+readme = "readme.md"
+repository = "https://github.com/substack/argmap.rs"
+homepage = "https://github.com/substack/argmap.rs"
+documentation = "https://docs.rs/argmap"
+keywords = [ "argument", "argv", "parser", "hashmap" ]
 edition = "2018"
-
-[dependencies]
 
 [dev-dependencies]
 pretty_assertions = "0.7.1"
