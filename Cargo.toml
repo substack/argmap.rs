@@ -1,6 +1,6 @@
 [package]
 name = "argmap"
-version = "1.0.0"
+version = "1.1.0"
 description = "parse command-line arguments into a hashmap and vec of positional args"
 license = "MIT OR Apache-2.0"
 readme = "readme.md"
