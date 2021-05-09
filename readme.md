@@ -2,15 +2,18 @@
 
 parse command-line arguments into a hashmap and vec of positional args
 
-This library does not make you write a struct or format a help message. Everything stays a `String`
-and it's up to you to do whatever kind of parsing you need.
+This library doesn't populate custom structs, format help messages, or convert types.
 
-You provide an iterator of items that implement ToString and you get back a 2-tuple of `(args,argv)`:
+You provide an iterator of items that implement ToString and you get back a 2-tuple of
+`(args,argv)` where:
+
+* `args` is a `Vec<String>` of positional arguments
+* `argv` is a `HashMap<String,Vec<String>>` of all the values that map to a `--key`
 
 ``` rust
 let (args,argv) = argmap::parse(std::env::args());
-eprintln!["args={:?}", &args]; // args is a Vec<String> of positional arguments
-eprintln!["argv={:?}", &argv]; // argv is a HashMap<String,Vec<String>>
+eprintln!["args={:?}", &args];
+eprintln!["argv={:?}", &argv];
 ```
 
 Long (`--file`) and short (`-x`) options, with or without equal signs, clustered short options
@@ -35,6 +38,14 @@ let (args,argv) = argmap::parse(std::env::args());
 let cool = argv.get("cool").and_then(|v| v.last());
 ```
 
+Boolean options will be stored as an empty `vec![]`. You can use `.contains_key()` to test for the
+presence of a boolean flag:
+
+``` rust
+let (args,argv) = argmap::parse(std::env::args());
+let show_help = argv.contains_key("h") || argv.contains_key("help");
+```
+
 `HashMap` has more ergonomic field access than any argument parser could hope to create and you can
 use the knowledge you already have for how to work with it instead of learning an argument-parser
 specific api.
@@ -55,10 +66,7 @@ type R = Box<dyn io::Read+Unpin>;
 
 fn main() -> Result<(),Error> {
   let (args,argv) = argmap::new()
-    .boolean("h").boolean("help")
-    .boolean("c").boolean("bytes")
-    .boolean("w").boolean("words")
-    .boolean("l").boolean("lines")
+    .booleans(&[ "h", "help", "c", "bytes", "w", "words", "l", "lines" ])
     .parse(std::env::args());
   if argv.contains_key("h") || argv.contains_key("help") {
     indoc::printdoc![r#"usage: {} {{OPTIONS}} [FILE]
@@ -116,8 +124,8 @@ fn main() -> Result<(),Error> {
 }
 ```
 
-This example also demonstrates the `.boolean()` method to tell the parser that certain fields are to
-be interpreted as boolean values. Right now that is the only configuration available.
+This example also demonstrates how to tell the parser that certain fields are to be interpreted as
+boolean values. Right now that is the only configuration available.
 
 Many libraries that do parsing also provide help messages, but I much prefer to write them out by
 hand as in the example above. This way, I have more control over how the help info is presented and

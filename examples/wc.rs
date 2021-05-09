@@ -5,10 +5,7 @@ type R = Box<dyn io::Read+Unpin>;
 
 fn main() -> Result<(),Error> {
   let (args,argv) = argmap::new()
-    .boolean("h").boolean("help")
-    .boolean("c").boolean("bytes")
-    .boolean("w").boolean("words")
-    .boolean("l").boolean("lines")
+    .booleans(&[ "h", "help", "c", "bytes", "w", "words", "l", "lines" ])
     .parse(std::env::args());
   if argv.contains_key("h") || argv.contains_key("help") {
     indoc::printdoc![r#"usage: {} {{OPTIONS}} [FILE]

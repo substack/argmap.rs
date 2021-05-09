@@ -148,6 +148,28 @@ use std::collections::HashMap;
       ("s",vec!["@4"]),
     ].iter())];
   }
+
+  {
+    let (args,argv) = argmap::new().booleans(&["q","z"]).parse([
+      "-q", "x", "-z", "y"
+    ].iter());
+    assert_eq![args, vec!["x","y"]];
+    assert_eq![argv, hash([
+      ("q",vec![]),
+      ("z",vec![]),
+    ].iter())];
+  }
+
+  {
+    let (args,argv) = argmap::new().booleans(&vec!["q","z"]).parse([
+      "-q", "x", "-z", "y"
+    ].iter());
+    assert_eq![args, vec!["x","y"]];
+    assert_eq![argv, hash([
+      ("q",vec![]),
+      ("z",vec![]),
+    ].iter())];
+  }
 }
 
 fn hash<'a>(i: impl Iterator<Item=&'a (&'a str,Vec<&'a str>)>) -> HashMap<String,Vec<String>> {
