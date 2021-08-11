@@ -1,4 +1,3 @@
-#![feature(extended_key_value_attributes)]
 #![doc=include_str!("../readme.md")]
 
 use std::collections::{HashMap,HashSet};
